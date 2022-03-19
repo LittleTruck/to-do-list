@@ -1,4 +1,4 @@
-import express, { Express } from "express"
+import express, {Express} from "express"
 import mongoose from "mongoose"
 import cors from "cors"
 import bodyParser from "body-parser"
@@ -8,11 +8,17 @@ const app: Express = express()
 
 const PORT: string | number = process.env.PORT || 8000
 
+app.set('view engine', 'ejs');
+
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true })); 
+app.use(bodyParser.urlencoded({extended: true}));
 
 app.use(cors())
 app.use(todoRoutes)
+
+app.get('/', function(req,res) {
+    res.sendFile(__dirname + '/index.html');
+})
 
 const uri: string = `mongodb://localhost:27017`
 

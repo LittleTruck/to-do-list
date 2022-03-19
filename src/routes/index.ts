@@ -3,7 +3,8 @@ import { getTodos, addTodo } from "../controllers/todos"
 
 const router: Router = Router()
 
-router.get("/todos", getTodos)
-router.post("/todos", addTodo)
+router.route('/api/todos')
+    .get(getTodos)
+    .post(addTodo)
 
 export default router
