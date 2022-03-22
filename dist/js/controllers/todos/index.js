@@ -15,8 +15,35 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteTodo = exports.updateTodo = exports.addTodo = exports.getTodos = void 0;
 const todo_1 = __importDefault(require("../../models/todo"));
 const getTodos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const keyword = req.query.keyword;
+    const reg = new RegExp(keyword, 'i');
     try {
-        const todos = yield todo_1.default.find();
+        let todos;
+        if (req.query.status) {
+            todos = yield todo_1.default.find({
+                $and: [
+                    {
+                        $or: [
+                            { name: { $regex: reg } },
+                            { description: { $regex: reg } }
+                        ]
+                    },
+                    { status: req.query.status }
+                ]
+            }, {}, {
+                sort: { createdAt: -1 }
+            });
+        }
+        else {
+            todos = yield todo_1.default.find({
+                $or: [
+                    { name: { $regex: reg } },
+                    { description: { $regex: reg } }
+                ]
+            }, {}, {
+                sort: { createdAt: -1 }
+            });
+        }
         res.status(200).json({ todos });
     }
     catch (error) {

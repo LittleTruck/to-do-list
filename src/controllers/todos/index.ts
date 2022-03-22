@@ -3,8 +3,43 @@ import {ITodo} from "../../types/todo"
 import Todo from "../../models/todo"
 
 const getTodos = async (req: Request, res: Response): Promise<void> => {
+    const keyword = req.query.keyword
+    const reg = new RegExp(keyword, 'i')
+
     try {
-        const todos: ITodo[] = await Todo.find()
+        let todos: ITodo[]
+
+        if (req.query.status) {
+            todos = await Todo.find({
+                    $and: [
+                        {
+                            $or: [
+                                {name: {$regex: reg}},
+                                {description: {$regex: reg}}
+                            ]
+                        },
+                        {status: req.query.status}
+                    ]
+                },
+                {},
+                {
+                    sort: {createdAt: -1}
+                },
+            )
+        } else {
+            todos = await Todo.find({
+                    $or: [
+                        {name: {$regex: reg}},
+                        {description: {$regex: reg}}
+                    ]
+                },
+                {},
+                {
+                    sort: {createdAt: -1}
+                },
+            )
+        }
+
         res.status(200).json({todos})
     } catch (error) {
         throw error
@@ -75,3 +110,5 @@ const deleteTodo = async (req: Request, res: Response): Promise<void> => {
 }
 
 export {getTodos, addTodo, updateTodo, deleteTodo}
+
+
