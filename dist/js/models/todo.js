@@ -8,11 +8,11 @@ const todoSchema = new mongoose_1.Schema({
     },
     description: {
         type: String,
-        required: true,
     },
     status: {
         type: Boolean,
         required: true,
+        default: false,
     },
 }, { timestamps: true });
 exports.default = (0, mongoose_1.model)("Todo", todoSchema);

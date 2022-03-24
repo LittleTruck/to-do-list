@@ -1,0 +1,87 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Todo List API",
+        "description": "Simple RESTful API in Node.js with TypeScript",
+        "version": "0.0.1"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000/api",
+            "description": "Todo List API"
+        }
+    ],
+    "paths": {
+        "/todos": {
+            "get": {
+                "summary": "Return all todos with list.",
+                "description": "Return all existed todo item.",
+                "responses": {
+                    "200": {
+                        "description": "A JSON array of todo names",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Todo"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "summary": "Add a new todo item.",
+                "description": "Add a new todo item.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Todo"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Success add todo item",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Todo"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Todo": {
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "example": "do something"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "something details"
+                    },
+                    "status": {
+                        "type": "boolean",
+                        "example": false
+                    }
+                },
+                "required": ["name"]
+            }
+        }
+    }
+}
