@@ -3,8 +3,8 @@ import {ITodo} from "../../types/todo"
 import Todo from "../../models/todo"
 
 const getTodos = async (req: Request, res: Response): Promise<void> => {
-    const keyword = req.query.keyword
-    const reg = new RegExp(keyword, 'i')
+    let keyword = req.query.keyword || ""
+    const reg = new RegExp(keyword.toString(), 'i')
 
     try {
         let todos: ITodo[]

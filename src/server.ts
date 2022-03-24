@@ -8,8 +8,6 @@ const app: Express = express()
 
 const PORT: string | number = process.env.PORT || 8000
 
-app.set('view engine', 'ejs');
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
@@ -20,7 +18,7 @@ app.get('/', function(req,res) {
     res.sendFile(__dirname + '/index.html');
 })
 
-const uri: string = `mongodb://localhost:27017`
+const uri: string = `mongodb://127.0.0.1:27017`
 
 mongoose
     .connect(uri)

@@ -15,8 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteTodo = exports.updateTodo = exports.addTodo = exports.getTodos = void 0;
 const todo_1 = __importDefault(require("../../models/todo"));
 const getTodos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const keyword = req.query.keyword;
-    const reg = new RegExp(keyword, 'i');
+    let keyword = req.query.keyword || "";
+    const reg = new RegExp(keyword.toString(), 'i');
     try {
         let todos;
         if (req.query.status) {
