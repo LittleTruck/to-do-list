@@ -7,6 +7,7 @@ router.route('/api/todos')
     .get(todos_1.getTodos)
     .post(todos_1.addTodo);
 router.route('/api/todos/:id')
+    .get(todos_1.getTodo)
     .put(todos_1.updateTodo)
     .delete(todos_1.deleteTodo);
 exports.default = router;

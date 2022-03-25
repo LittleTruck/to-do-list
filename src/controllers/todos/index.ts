@@ -46,6 +46,16 @@ const getTodos = async (req: Request, res: Response): Promise<void> => {
     }
 }
 
+const getTodo = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const todo = await Todo.findById(req.params.id)
+
+        res.status(200).json({todo: todo})
+    } catch (error) {
+        throw error
+    }
+}
+
 const addTodo = async (req: Request, res: Response): Promise<void> => {
     try {
         const body = req.body as Pick<ITodo, "name" | "description" | "status">
@@ -109,6 +119,6 @@ const deleteTodo = async (req: Request, res: Response): Promise<void> => {
     }
 }
 
-export {getTodos, addTodo, updateTodo, deleteTodo}
+export {getTodos, getTodo, addTodo, updateTodo, deleteTodo}
 
 

@@ -18,7 +18,7 @@
                 "description": "Return all existed todo item.",
                 "responses": {
                     "200": {
-                        "description": "A JSON array of todo names",
+                        "description": "A JSON array of todos",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -52,6 +52,96 @@
                             "application/json": {
                                 "schema": {
                                     "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Todo"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/todos/{id}": {
+            "get": {
+                "summary": "Return the specific todo item.",
+                "description": "Return the specific todo item.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "todo id which wants to get.",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A JSON object of todo.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/Todo"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update the specific todo item.",
+                "description": "Update the specific todo item.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "todo id which wants to update.",
+                        "required": true
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/Todo"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success update todo item",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "items": {
+                                        "$ref": "#/components/schemas/Todo"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete the specific todo item.",
+                "description": "Delete the specific todo item.",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "todo id which wants to delete.",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success delete todo item",
+                        "content": {
+                            "application/json": {
+                                "schema": {
                                     "items": {
                                         "$ref": "#/components/schemas/Todo"
                                     }
