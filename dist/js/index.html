@@ -2,53 +2,153 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <meta content="ie=edge" http-equiv="X-UA-Compatible">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-    <script crossorigin="anonymous"
+    <title>Title</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+    <script src="https://unpkg.com/vue-material"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sass.js/0.9.2/sass.min.js"
             integrity="sha512-mA5b7w9mZvGLWgjIqp9KhWNzkkZ/H3gC4Ua6GOn9m/xl1UF4ghH8GsriKvAYxLsxoKvn6NdebW7kZ6iGB3CGSg=="
-            referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/sass.js/0.9.2/sass.min.js"></script>
-    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://unpkg.com/vue-material"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.1/axios.min.js"></script>
-    <title>Todo List</title>
+
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic|Material+Icons">
+    <link rel="stylesheet" href="https://unpkg.com/vue-material/dist/vue-material.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/vue-material/dist/theme/default.css">
 </head>
 <body>
-<div class="content">
-    <div class="date-row">
-        <div class="date">
-            <span class="day">12</span>
-            <span class="mmyy">JAN<br>2022</span>
+<div id="app">
+    <div class="content">
+        <div class="date-row">
+            <div class="date">
+                <span class="day">{{date.getDate()}}</span>
+                <span class="mmyy">{{ months[date.getMonth()]}}<br>{{date.getFullYear()}}</span>
+            </div>
+            <div class="weekday">{{ days[date.getDay()]}}</div>
         </div>
-        <div class="weekday">TUESDAY</div>
-    </div>
-    <div class="todo-container">
-        <div class="todo-row">
-            <span class="todo-priority">1</span>
-            <span class="todo-description">test1</span>
-            <span class="todo-check"><i class="bx bx-circle"></i></span>
+        <div class="todo-container">
+            <div v-for="(todo, index) in todos" class="todo-row">
+                <span class="todo-priority">{{ todo._id }}</span>
+                <span class="todo-name">{{ todo.name }}</span>
+                <span class="todo-status">
+                    <i @click="todo.status = !todo.status" class="bx"
+                       :style="todo.status ? 'color:#588941':''"
+                       :class="todo.status ?'bxs-check-circle':'bx-circle'"></i>
+                    <i class="bx bx-trash-alt"></i>
+                </span>
+            </div>
         </div>
-        <div class="todo-row">
-            <span class="todo-priority">2</span>
-            <span class="todo-description">test2</span>
-            <span class="todo-check"><i class="bx bx-circle"></i></span>
-        </div>
-    </div>
-    <div class="buttons">
-        <div class="button" id="reveal"><i class='bx bx-plus'></i></div>
-        <div class="button" id="filter"><i class='bx bx-filter'></i></div>
-    </div>
-</div>
-
-<div class="modal-container">
-    <div class="modal-background">
-        <div class="modal">
-            <h2>I'm a Modal</h2>
-            <p>Hear me roar.</p>
+        <div class="buttons">
+            <div @click="showTodo = true" id="reveal" class="button"><i class='bx bx-plus'></i></div>
+            <div @click="showFilter = true" id="filter" class="button"><i class='bx bx-filter'></i></div>
+            <div @click="showSearch = true" id="search" class="button"><i class='bx bx-search'></i></div>
         </div>
     </div>
+    <md-dialog :md-active.sync="showTodo">
+        <md-dialog-title>New To-do</md-dialog-title>
+        <div class="dialog-container">
+            <md-field>
+                <label>Name</label>
+                <md-input v-model="empty.name"></md-input>
+            </md-field>
+            <md-field>
+                <label>Description</label>
+                <md-textarea v-model="empty.description"></md-textarea>
+            </md-field>
+            <div class="priority-row">
+                <span>Priority</span>
+                <md-radio v-model="empty.priority" value="1"><span class="todo-priority">1</span></md-radio>
+                <md-radio v-model="empty.priority" value="2"><span class="todo-priority">2</span></md-radio>
+                <md-radio v-model="empty.priority" value="3"><span class="todo-priority">3</span></md-radio>
+                <md-radio v-model="empty.priority" value="4"><span class="todo-priority">4</span></md-radio>
+                <md-radio v-model="empty.priority" value="5"><span class="todo-priority">5</span></md-radio>
+            </div>
+        </div>
+        <md-dialog-actions>
+            <md-button class="md-primary" @click="showTodo = false">Close</md-button>
+            <md-button class="md-primary" @click="showTodo = false">Save</md-button>
+        </md-dialog-actions>
+    </md-dialog>
+    <md-dialog :md-active.sync="showFilter">
+        <md-dialog-title>Filter</md-dialog-title>
+        <div class="dialog-container">
+            <div class="status-row">
+                <span>Status</span>
+                <md-radio v-model="filter.status">All</md-radio>
+                <md-radio v-model="filter.status" :value="0">To-do</md-radio>
+                <md-radio v-model="filter.status" :value="1">done</md-radio>
+            </div>
+            <div class="priority-row">
+                <span>Priority</span>
+                <md-radio v-model="filter.priority" value="1"><span class="todo-priority">1</span></md-radio>
+                <md-radio v-model="filter.priority" value="2"><span class="todo-priority">2</span></md-radio>
+                <md-radio v-model="filter.priority" value="3"><span class="todo-priority">3</span></md-radio>
+                <md-radio v-model="filter.priority" value="4"><span class="todo-priority">4</span></md-radio>
+                <md-radio v-model="filter.priority" value="5"><span class="todo-priority">5</span></md-radio>
+            </div>
+        </div>
+        <md-dialog-actions>
+            <md-button class="md-primary" @click="showFilter = false">GO!</md-button>
+        </md-dialog-actions>
+    </md-dialog>
+    <md-dialog :md-active.sync="showSearch">
+        <md-dialog-title>Search</md-dialog-title>
+        <div class="dialog-container">
+            <md-field>
+                <label>Keyword</label>
+                <md-input v-model="empty.name"></md-input>
+            </md-field>
+        </div>
+        <md-dialog-actions>
+            <md-button class="md-primary" @click="showSearch = false">GO!</md-button>
+        </md-dialog-actions>
+    </md-dialog>
 </div>
 </body>
 </html>
+<script>
+    Vue.use(VueMaterial.default)
+    const vm = new Vue({
+        el: '#app',
+        data() {
+            return {
+                date: new Date(),
+                days: ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'],
+                months: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
+                todos: [{
+                    _id: 0,
+                    name: "test1",
+                    description: "description1",
+                    priority:1,
+                    status: false,
+                },
+                    {
+                        _id: 1,
+                        name: "test2",
+                        description: "description2",
+                        priority:2,
+                        status: false,
+                    }],
+                empty: {
+                    _id: null,
+                    name: "",
+                    description: "",
+                    priority:null,
+                    status: false,
+                },
+                filter:{
+                    status:null,
+                    priority:null,
+                },
+                showTodo: false,
+                showFilter:false,
+                showSearch:false,
+
+            }
+        },
+    })
+</script>
 <style>
     * {
         box-sizing: border-box;
@@ -85,8 +185,8 @@
         display: flex;
         font-weight: 700;
         font-size: 18px;
+        align-items: center;
     }
-
     .day {
         font-size: 40px;
         padding-right: 10px;
@@ -117,74 +217,36 @@
     }
 
     .todo-priority {
-        font-size: 25px;
+        font-size: 18px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 30px;
+        height: 25px;
+        border-radius: 3px;
+        color: #797979;
+        border: solid 2px #797979;
     }
-
-    .todo-description {
+    .todo-name {
         width: 100%;
         word-break: break-all;
         padding: 0 30px;
+        cursor: pointer;
     }
-
-    .todo-check {
+    .todo-name:hover{
+        opacity: 0.6;
+    }
+    .todo-status {
+        display: flex;
         font-size: 35px;
         cursor: pointer;
     }
-
-    .modal-container {
-        position: fixed;
-        display: table;
-        height: 100%;
-        width: 100%;
-        top: 0;
-        left: 0;
-        transform: scale(0);
-        z-index: 1;
+    .todo-status i{
+        padding-left: 10px;
     }
-
-    .modal-container.reveal {
-        transform: scale(1);
+    .todo-status i:hover{
+        opacity: 0.6;
     }
-
-    .modal-container.reveal .modal-background {
-        background: rgba(0, 0, 0, .0);
-        animation: fadeIn 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
-    }
-
-    .modal-container.reveal .modal-background .modal {
-        opacity: 0;
-        animation: scaleUp 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
-    }
-
-    .modal-container.reveal.out {
-        animation: quickScaleDown 0s 0.5s linear forwards;
-    }
-
-    .modal-container.reveal.out .modal-background {
-        animation: fadeOut 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
-    }
-
-    .modal-container.reveal.out .modal-background .modal {
-        animation: scaleDown 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
-    }
-
-
-    .modal-container .modal-background {
-        display: table-cell;
-        background: rgba(0, 0, 0, .8);
-        text-align: center;
-        vertical-align: middle;
-    }
-
-    .modal-container .modal-background .modal {
-        background: white;
-        padding: 50px;
-        display: inline-block;
-        border-radius: 3px;
-        font-weight: 300;
-        position: relative;
-    }
-
     .content {
         margin: 5vh auto 0;
         width: 500px;
@@ -226,80 +288,29 @@
         background: #508e3c;
     }
 
-    @keyframes fadeIn {
-        0% {
-            background: rgba(0, 0, 0, .0);
-        }
-        100% {
-            background: rgba(0, 0, 0, .7);
-        }
+    .md-dialog-container {
+        width: 500px;
+    }
+    .priority-row .md-radio-container{
+        display: none;
+    }
+    .md-checked .todo-priority{
+        color: #ff5252;
+        border-color: #ff5252;
+    }
+    .dialog-container {
+        padding: 10px 50px;
+    }
+    .status-row{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .priority-row{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
 
-    @keyframes fadeOut {
-        0% {
-            background: rgba(0, 0, 0, .7);
-        }
-        100% {
-            background: rgba(0, 0, 0, .0);
-        }
-    }
-
-    @keyframes scaleUp {
-        0% {
-            transform: scale(0.8) translateY(1000px);
-            opacity: 0;
-        }
-        100% {
-            transform: scale(1) translateY(0px);
-            opacity: 1;
-        }
-    }
-
-    @keyframes scaleDown {
-        0% {
-            transform: scale(1) translateY(0px);
-            opacity: 1;
-        }
-        100% {
-            transform: scale(0.8) translateY(1000px);
-            opacity: 0;
-        }
-    }
-
-    @keyframes quickScaleDown {
-        0% {
-            transform: scale(1);
-        }
-        99.9% {
-            transform: scale(1);
-        }
-        100% {
-            transform: scale(0);
-        }
-    }
 </style>
-<script>
-    axios.get('api/todos')
-        .then((res) => {
-            console.log(res)
-        })
-        .catch((error) => {
-            console.error(error)
-        })
-        .finally(() => {
-        })
 
-    // click button -> show Modal
-    $('.button').click(() => {
-        $('.modal-container').addClass('reveal');
-        $('body').addClass('modal-active');
-    })
-    //  click outside -> close Modal
-    $('.modal-container').click(() => {
-        $(this).addClass('out');
-        setTimeout(() => {
-            $(this).removeClass('reveal out')
-        }, 1000)
-        $('body').removeClass('modal-active');
-    });
-</script>
