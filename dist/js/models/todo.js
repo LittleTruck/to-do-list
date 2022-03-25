@@ -14,5 +14,10 @@ const todoSchema = new mongoose_1.Schema({
         required: true,
         default: false,
     },
+    priority: {
+        type: Number,
+        required: true,
+        default: 1,
+    },
 }, { timestamps: true });
 exports.default = (0, mongoose_1.model)("Todo", todoSchema);

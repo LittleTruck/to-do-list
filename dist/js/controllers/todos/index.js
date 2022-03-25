@@ -16,34 +16,36 @@ exports.deleteTodo = exports.updateTodo = exports.addTodo = exports.getTodo = ex
 const todo_1 = __importDefault(require("../../models/todo"));
 const getTodos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let keyword = req.query.keyword || "";
+    let priority = req.query.priority || 1;
     const reg = new RegExp(keyword.toString(), 'i');
+    let query;
+    if (req.query.status || req.query.priority) {
+        query = {
+            "$and": [
+                {
+                    "$or": [
+                        { name: { $regex: reg } },
+                        { description: { $regex: reg } }
+                    ]
+                },
+                { status: req.query.status },
+                { priority: req.query.priority }
+            ]
+        };
+    }
+    else {
+        query = {
+            "$or": [
+                { name: { $regex: reg } },
+                { description: { $regex: reg } }
+            ]
+        };
+    }
     try {
         let todos;
-        if (req.query.status) {
-            todos = yield todo_1.default.find({
-                $and: [
-                    {
-                        $or: [
-                            { name: { $regex: reg } },
-                            { description: { $regex: reg } }
-                        ]
-                    },
-                    { status: req.query.status }
-                ]
-            }, {}, {
-                sort: { createdAt: -1 }
-            });
-        }
-        else {
-            todos = yield todo_1.default.find({
-                $or: [
-                    { name: { $regex: reg } },
-                    { description: { $regex: reg } }
-                ]
-            }, {}, {
-                sort: { createdAt: -1 }
-            });
-        }
+        todos = yield todo_1.default.find(query, {}, {
+            sort: { createdAt: -1 }
+        });
         res.status(200).json({ todos });
     }
     catch (error) {
@@ -68,6 +70,7 @@ const addTodo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             name: body.name,
             description: body.description,
             status: body.status,
+            priority: body.priority,
         });
         const newTodo = yield todo.save();
         const allTodos = yield todo_1.default.find();

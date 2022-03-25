@@ -167,7 +167,13 @@
           },
           "status": {
             "type": "boolean",
-            "example": false
+            "example": false,
+            "default": false
+          },
+          "priority": {
+            "type": "number",
+            "example": 3,
+            "default": 1
           }
         },
         "required": ["name"]

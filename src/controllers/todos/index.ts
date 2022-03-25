@@ -4,41 +4,41 @@ import Todo from "../../models/todo"
 
 const getTodos = async (req: Request, res: Response): Promise<void> => {
     let keyword = req.query.keyword || ""
+    let priority = req.query.priority || 1
     const reg = new RegExp(keyword.toString(), 'i')
 
-    try {
-        let todos: ITodo[]
-
-        if (req.query.status) {
-            todos = await Todo.find({
-                    $and: [
-                        {
-                            $or: [
-                                {name: {$regex: reg}},
-                                {description: {$regex: reg}}
-                            ]
-                        },
-                        {status: req.query.status}
-                    ]
-                },
-                {},
+    let query: {};
+    if (req.query.status || req.query.priority) {
+        query = {
+            "$and": [
                 {
-                    sort: {createdAt: -1}
-                },
-            )
-        } else {
-            todos = await Todo.find({
-                    $or: [
+                    "$or": [
                         {name: {$regex: reg}},
                         {description: {$regex: reg}}
                     ]
                 },
-                {},
-                {
-                    sort: {createdAt: -1}
-                },
-            )
+                {status: req.query.status},
+                {priority: req.query.priority}
+            ]
+        };
+    } else {
+        query = {
+            "$or": [
+                {name: {$regex: reg}},
+                {description: {$regex: reg}}
+            ]
         }
+    }
+
+    try {
+        let todos: ITodo[]
+        todos = await Todo.find(
+            query,
+            {},
+            {
+                sort: {createdAt: -1}
+            },
+        )
 
         res.status(200).json({todos})
     } catch (error) {
@@ -58,12 +58,13 @@ const getTodo = async (req: Request, res: Response): Promise<void> => {
 
 const addTodo = async (req: Request, res: Response): Promise<void> => {
     try {
-        const body = req.body as Pick<ITodo, "name" | "description" | "status">
+        const body = req.body as Pick<ITodo, "name" | "description" | "status" | "priority">
 
         const todo: ITodo = new Todo({
             name: body.name,
             description: body.description,
             status: body.status,
+            priority: body.priority,
         })
 
         const newTodo: ITodo = await todo.save()

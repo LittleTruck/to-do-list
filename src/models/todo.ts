@@ -17,6 +17,12 @@ const todoSchema: Schema = new Schema(
             required: true,
             default: false,
         },
+
+        priority: {
+            type: Number,
+            required: true,
+            default: 1,
+        },
     },
     { timestamps: true }
 )
