@@ -32,7 +32,8 @@
         </div>
         <div  class="todo-container">
             <span v-if="todos.length === 0" style="overflow: hidden">There are no current todos</span>
-            <div :key="todo._id" class="todo-row" v-for="(todo, index) in todos">
+            <div v-for="(todo, index) in todos" :key="todo._id"
+                 class="todo-row" :class="todo.status ? 'todo-done': ''">
                 <span class="todo-priority">{{ todo.priority }}</span>
                 <span @click="handleUpdate(todo._id)" class="todo-name">{{ todo.name }}</span>
                 <span class="todo-status">
@@ -115,6 +116,7 @@
                 date: new Date(),
                 days: ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'],
                 months: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
+                baseUrl:"http://localhost:8000",
                 todos: [],
                 todo: {},
                 empty: {
@@ -148,7 +150,7 @@
         },
         methods: {
             async getTodos() {
-                await axios.get('http://localhost:8000/api/todos',{
+                await axios.get(`${this.baseUrl}/api/todos`,{
                     params:{
                         keyword : this.filter.keyword,
                         status: this.filter.status,
@@ -167,7 +169,7 @@
                     })
             },
             async getTodoById(id) {
-                await axios.get('http://localhost:8000/api/todos/' + id)
+                await axios.get(`${this.baseUrl}/api/todos/` + id)
                     .then(res => {
                         this.todo = res.data.todo
                     })
@@ -181,7 +183,7 @@
             },
             saveTodo() {
                 if (this.todo._id) {
-                    axios.put('http://localhost:8000/api/todos/' + this.todo._id, this.todo)
+                    axios.put(`${this.baseUrl}/api/todos/` + this.todo._id, this.todo)
                         .then(() => {
                             Vue.$toast.open({
                                 message: 'Update todo success !',
@@ -196,7 +198,7 @@
                             throw new Error(error)
                         })
                 } else {
-                    axios.post('http://localhost:8000/api/todos' , this.todo)
+                    axios.post(`${this.baseUrl}/api/todos/` , this.todo)
                         .then(() => {
                             Vue.$toast.open({
                                 message: 'Create todo success !',
@@ -225,7 +227,7 @@
                 this.getTodoById(id)
             },
             removeTodo(id){
-                axios.delete('http://localhost:8000/api/todos/'+id)
+                axios.delete(`${this.baseUrl}/api/todos/`+id)
                     .then(() => {
                         Vue.$toast.open({
                             message: 'Delete todo success !',
@@ -321,7 +323,9 @@
         justify-content: space-between;
         margin-bottom: 30px;
     }
-
+    .todo-done{
+        opacity: 0.6;
+    }
     .todo-priority {
         font-size: 18px;
         display: flex;
@@ -340,7 +344,9 @@
         padding: 0 30px;
         cursor: pointer;
     }
-
+    .todo-done .todo-name{
+        text-decoration: line-through;
+    }
     .todo-name:hover {
         opacity: 0.6;
     }
