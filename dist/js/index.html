@@ -5,17 +5,20 @@
     <title>Title</title>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
     <script src="https://unpkg.com/vue-material"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sass.js/0.9.2/sass.min.js"
+    <script crossorigin="anonymous"
             integrity="sha512-mA5b7w9mZvGLWgjIqp9KhWNzkkZ/H3gC4Ua6GOn9m/xl1UF4ghH8GsriKvAYxLsxoKvn6NdebW7kZ6iGB3CGSg=="
-            crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            referrerpolicy="no-referrer"
+            src="https://cdnjs.cloudflare.com/ajax/libs/sass.js/0.9.2/sass.min.js"></script>
     <script src="https://unpkg.com/vue-material"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.1/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-toast-notification@0.6"></script>
 
+    <link href="https://cdn.jsdelivr.net/npm/vue-toast-notification@0.6.2/dist/theme-default.css" rel="stylesheet">
     <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic|Material+Icons">
-    <link rel="stylesheet" href="https://unpkg.com/vue-material/dist/vue-material.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/vue-material/dist/theme/default.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic|Material+Icons"
+          rel="stylesheet">
+    <link href="https://unpkg.com/vue-material/dist/vue-material.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/vue-material/dist/theme/default.css" rel="stylesheet">
 </head>
 <body>
 <div id="app">
@@ -28,46 +31,46 @@
             <div class="weekday">{{ days[date.getDay()]}}</div>
         </div>
         <div class="todo-container">
-            <div v-for="(todo, index) in todos" class="todo-row">
-                <span class="todo-priority">{{ todo._id }}</span>
-                <span class="todo-name">{{ todo.name }}</span>
+            <div :key="todo._id" class="todo-row" v-for="(todo, index) in todos">
+                <span class="todo-priority">{{ todo.priority }}</span>
+                <span @click="handleUpdate(todo._id)" class="todo-name">{{ todo.name }}</span>
                 <span class="todo-status">
-                    <i @click="todo.status = !todo.status" class="bx"
-                       :style="todo.status ? 'color:#588941':''"
-                       :class="todo.status ?'bxs-check-circle':'bx-circle'"></i>
-                    <i class="bx bx-trash-alt"></i>
+                    <i :class="todo.status ?'bxs-check-circle':'bx-circle'" :style="todo.status ? 'color:#588941':''"
+                       @click="handleStatus(todo._id); todo.status = !todo.status"
+                       class="bx"></i>
+                    <i @click="removeTodo(todo._id)" class="bx bx-trash-alt"></i>
                 </span>
             </div>
         </div>
         <div class="buttons">
-            <div @click="showTodo = true" id="reveal" class="button"><i class='bx bx-plus'></i></div>
-            <div @click="showFilter = true" id="filter" class="button"><i class='bx bx-filter'></i></div>
-            <div @click="showSearch = true" id="search" class="button"><i class='bx bx-search'></i></div>
+            <div @click="handleCreate()" class="button" id="reveal"><i class='bx bx-plus'></i></div>
+            <div @click="showFilter = true" class="button" id="filter"><i class='bx bx-filter'></i></div>
+            <div @click="showSearch = true" class="button" id="search"><i class='bx bx-search'></i></div>
         </div>
     </div>
     <md-dialog :md-active.sync="showTodo">
-        <md-dialog-title>New To-do</md-dialog-title>
+        <md-dialog-title>{{ dialogTitle }}</md-dialog-title>
         <div class="dialog-container">
             <md-field>
                 <label>Name</label>
-                <md-input v-model="empty.name"></md-input>
+                <md-input v-model="todo.name"></md-input>
             </md-field>
             <md-field>
                 <label>Description</label>
-                <md-textarea v-model="empty.description"></md-textarea>
+                <md-textarea v-model="todo.description"></md-textarea>
             </md-field>
             <div class="priority-row">
                 <span>Priority</span>
-                <md-radio v-model="empty.priority" value="1"><span class="todo-priority">1</span></md-radio>
-                <md-radio v-model="empty.priority" value="2"><span class="todo-priority">2</span></md-radio>
-                <md-radio v-model="empty.priority" value="3"><span class="todo-priority">3</span></md-radio>
-                <md-radio v-model="empty.priority" value="4"><span class="todo-priority">4</span></md-radio>
-                <md-radio v-model="empty.priority" value="5"><span class="todo-priority">5</span></md-radio>
+                <md-radio :value="1" v-model="todo.priority"><span class="priority-item">1</span></md-radio>
+                <md-radio :value="2" v-model="todo.priority"><span class="priority-item">2</span></md-radio>
+                <md-radio :value="3" v-model="todo.priority"><span class="priority-item">3</span></md-radio>
+                <md-radio :value="4" v-model="todo.priority"><span class="priority-item">4</span></md-radio>
+                <md-radio :value="5" v-model="todo.priority"><span class="priority-item">5</span></md-radio>
             </div>
         </div>
         <md-dialog-actions>
-            <md-button class="md-primary" @click="showTodo = false">Close</md-button>
-            <md-button class="md-primary" @click="showTodo = false">Save</md-button>
+            <md-button @click="showTodo = false" class="md-primary">Close</md-button>
+            <md-button @click="saveTodo" class="md-primary">Save</md-button>
         </md-dialog-actions>
     </md-dialog>
     <md-dialog :md-active.sync="showFilter">
@@ -76,20 +79,20 @@
             <div class="status-row">
                 <span>Status</span>
                 <md-radio v-model="filter.status">All</md-radio>
-                <md-radio v-model="filter.status" :value="0">To-do</md-radio>
-                <md-radio v-model="filter.status" :value="1">done</md-radio>
+                <md-radio :value="0" v-model="filter.status">To-do</md-radio>
+                <md-radio :value="1" v-model="filter.status">done</md-radio>
             </div>
             <div class="priority-row">
                 <span>Priority</span>
-                <md-radio v-model="filter.priority" value="1"><span class="todo-priority">1</span></md-radio>
-                <md-radio v-model="filter.priority" value="2"><span class="todo-priority">2</span></md-radio>
-                <md-radio v-model="filter.priority" value="3"><span class="todo-priority">3</span></md-radio>
-                <md-radio v-model="filter.priority" value="4"><span class="todo-priority">4</span></md-radio>
-                <md-radio v-model="filter.priority" value="5"><span class="todo-priority">5</span></md-radio>
+                <md-radio :value="1" v-model="filter.priority"><span class="priority-item">1</span></md-radio>
+                <md-radio :value="2" v-model="filter.priority"><span class="priority-item">2</span></md-radio>
+                <md-radio :value="3" v-model="filter.priority"><span class="priority-item">3</span></md-radio>
+                <md-radio :value="4" v-model="filter.priority"><span class="priority-item">4</span></md-radio>
+                <md-radio :value="5" v-model="filter.priority"><span class="priority-item">5</span></md-radio>
             </div>
         </div>
         <md-dialog-actions>
-            <md-button class="md-primary" @click="showFilter = false">GO!</md-button>
+            <md-button @click="showFilter = false" class="md-primary">GO!</md-button>
         </md-dialog-actions>
     </md-dialog>
     <md-dialog :md-active.sync="showSearch">
@@ -101,7 +104,7 @@
             </md-field>
         </div>
         <md-dialog-actions>
-            <md-button class="md-primary" @click="showSearch = false">GO!</md-button>
+            <md-button @click="showSearch = false" class="md-primary">GO!</md-button>
         </md-dialog-actions>
     </md-dialog>
 </div>
@@ -109,6 +112,8 @@
 </html>
 <script>
     Vue.use(VueMaterial.default)
+    Vue.use(VueToast);
+
     const vm = new Vue({
         el: '#app',
         data() {
@@ -116,37 +121,123 @@
                 date: new Date(),
                 days: ['SUNDAY', 'MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY', 'SATURDAY'],
                 months: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
-                todos: [{
-                    _id: 0,
-                    name: "test1",
-                    description: "description1",
-                    priority:1,
-                    status: false,
-                },
-                    {
-                        _id: 1,
-                        name: "test2",
-                        description: "description2",
-                        priority:2,
-                        status: false,
-                    }],
+                todos: [],
+                todo: {},
                 empty: {
                     _id: null,
                     name: "",
                     description: "",
-                    priority:null,
+                    priority: 1,
                     status: false,
                 },
-                filter:{
-                    status:null,
-                    priority:null,
+                filter: {
+                    status: null,
+                    priority: null,
                 },
                 showTodo: false,
-                showFilter:false,
-                showSearch:false,
-
+                showFilter: false,
+                showSearch: false,
+                dialogTitle: '',
             }
         },
+        created() {
+            this.getTodos()
+        },
+        methods: {
+            async getTodos() {
+                await axios.get('http://localhost:8000/api/todos')
+                    .then(res => {
+                        this.todos = res.data.todos
+                    })
+                    .catch(error => {
+                        Vue.$toast.open({
+                            message: error,
+                            type: 'error',
+                        })
+                        throw new Error(error)
+                    })
+            },
+            async getTodoById(id) {
+                await axios.get('http://localhost:8000/api/todos/' + id)
+                    .then(res => {
+                        this.todo = res.data.todo
+                    })
+                    .catch(error => {
+                        Vue.$toast.open({
+                            message: error,
+                            type: 'error',
+                        })
+                        throw new Error(error)
+                    })
+            },
+            saveTodo() {
+                if (this.todo._id) {
+                    axios.put('http://localhost:8000/api/todos/' + this.todo._id, this.todo)
+                        .then(() => {
+                            Vue.$toast.open({
+                                message: 'Update todo success !',
+                                type: 'success',
+                            })
+                        })
+                        .catch(error => {
+                            Vue.$toast.open({
+                                message: error,
+                                type: 'error',
+                            })
+                            throw new Error(error)
+                        })
+                } else {
+                    axios.post('http://localhost:8000/api/todos' , this.todo)
+                        .then(() => {
+                            Vue.$toast.open({
+                                message: 'Create todo success !',
+                                type: 'success',
+                            })
+                        })
+                        .catch(error => {
+                            Vue.$toast.open({
+                                message: error,
+                                type: 'error',
+                            })
+                            throw new Error(error)
+                        })
+                }
+                this.showTodo = false
+                this.getTodos()
+            },
+            handleCreate() {
+                this.showTodo = true
+                this.dialogTitle = 'New Todo'
+                this.todo = JSON.parse(JSON.stringify(this.empty))
+            },
+            handleUpdate(id) {
+                this.showTodo = true
+                this.dialogTitle = 'Edit Todo'
+                this.getTodoById(id)
+            },
+            removeTodo(id){
+                axios.delete('http://localhost:8000/api/todos/'+id)
+                    .then(() => {
+                        Vue.$toast.open({
+                            message: 'Delete todo success !',
+                            type: 'success',
+                        })
+                    })
+                    .catch(error => {
+                        Vue.$toast.open({
+                            message: error,
+                            type: 'error',
+                        })
+                        throw new Error(error)
+                    })
+                this.getTodos()
+            },
+            async handleStatus(id) {
+                await this.getTodoById(id)
+                this.todo.status = !this.todo.status
+                await this.saveTodo()
+            },
+        }
     })
 </script>
 <style>
@@ -187,6 +278,7 @@
         font-size: 18px;
         align-items: center;
     }
+
     .day {
         font-size: 40px;
         padding-right: 10px;
@@ -221,32 +313,38 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        width: 30px;
+        width: 12%;
         height: 25px;
         border-radius: 3px;
         color: #797979;
         border: solid 2px #797979;
     }
+
     .todo-name {
         width: 100%;
         word-break: break-all;
         padding: 0 30px;
         cursor: pointer;
     }
-    .todo-name:hover{
+
+    .todo-name:hover {
         opacity: 0.6;
     }
+
     .todo-status {
         display: flex;
         font-size: 35px;
         cursor: pointer;
     }
-    .todo-status i{
+
+    .todo-status i {
         padding-left: 10px;
     }
-    .todo-status i:hover{
+
+    .todo-status i:hover {
         opacity: 0.6;
     }
+
     .content {
         margin: 5vh auto 0;
         width: 500px;
@@ -291,22 +389,39 @@
     .md-dialog-container {
         width: 500px;
     }
-    .priority-row .md-radio-container{
+
+    .priority-row .md-radio-container {
         display: none;
     }
-    .md-checked .todo-priority{
+
+    .priority-item {
+        font-size: 18px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 30px;
+        height: 25px;
+        border-radius: 3px;
+        color: #797979;
+        border: solid 2px #797979;
+    }
+
+    .md-checked .priority-item {
         color: #ff5252;
         border-color: #ff5252;
     }
+
     .dialog-container {
         padding: 10px 50px;
     }
-    .status-row{
+
+    .status-row {
         display: flex;
         align-items: center;
         justify-content: space-between;
     }
-    .priority-row{
+
+    .priority-row {
         display: flex;
         align-items: center;
         justify-content: space-between;

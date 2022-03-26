@@ -176,7 +176,7 @@
             "default": 1
           }
         },
-        "required": ["name"]
+        "required": ["name","priority"]
       }
     }
   }

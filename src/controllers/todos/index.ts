@@ -42,6 +42,9 @@ const getTodos = async (req: Request, res: Response): Promise<void> => {
 
         res.status(200).json({todos})
     } catch (error) {
+        res
+            .status(500)
+            .json({message: error})
         throw error
     }
 }
@@ -52,6 +55,9 @@ const getTodo = async (req: Request, res: Response): Promise<void> => {
 
         res.status(200).json({todo: todo})
     } catch (error) {
+        res
+            .status(500)
+            .json({message: error})
         throw error
     }
 }
@@ -74,6 +80,9 @@ const addTodo = async (req: Request, res: Response): Promise<void> => {
             .status(201)
             .json({message: "Todo added", todo: newTodo, todos: allTodos})
     } catch (error) {
+        res
+            .status(500)
+            .json({message: error})
         throw error
     }
 }
@@ -98,6 +107,9 @@ const updateTodo = async (req: Request, res: Response): Promise<void> => {
             todos: allTodos,
         })
     } catch (error) {
+        res
+            .status(500)
+            .json({message: error})
         throw error
     }
 }
@@ -116,6 +128,9 @@ const deleteTodo = async (req: Request, res: Response): Promise<void> => {
             todos: allTodos,
         })
     } catch (error) {
+        res
+            .status(500)
+            .json({message: error})
         throw error
     }
 }

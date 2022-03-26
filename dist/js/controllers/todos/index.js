@@ -49,6 +49,9 @@ const getTodos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(200).json({ todos });
     }
     catch (error) {
+        res
+            .status(500)
+            .json({ message: error });
         throw error;
     }
 });
@@ -59,6 +62,9 @@ const getTodo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(200).json({ todo: todo });
     }
     catch (error) {
+        res
+            .status(500)
+            .json({ message: error });
         throw error;
     }
 });
@@ -79,6 +85,9 @@ const addTodo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             .json({ message: "Todo added", todo: newTodo, todos: allTodos });
     }
     catch (error) {
+        res
+            .status(500)
+            .json({ message: error });
         throw error;
     }
 });
@@ -95,6 +104,9 @@ const updateTodo = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         });
     }
     catch (error) {
+        res
+            .status(500)
+            .json({ message: error });
         throw error;
     }
 });
@@ -110,6 +122,9 @@ const deleteTodo = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         });
     }
     catch (error) {
+        res
+            .status(500)
+            .json({ message: error });
         throw error;
     }
 });
