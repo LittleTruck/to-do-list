@@ -16,6 +16,26 @@
       "get": {
         "summary": "Return all todos with list.",
         "description": "Return all existed todo item.",
+        "parameters": [
+          {
+            "name": "keyword",
+            "in": "query",
+            "description": "Todo name or description keyword which wants to filter.",
+            "required": false
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Todo status which wants to filter.",
+            "required": false
+          },
+          {
+            "name": "priority",
+            "in": "query",
+            "description": "Todo priority which wants to filter.",
+            "required": false
+          }
+        ],
         "responses": {
           "200": {
             "description": "A JSON array of todos",
@@ -70,7 +90,7 @@
           {
             "name": "id",
             "in": "path",
-            "description": "todo id which wants to get.",
+            "description": "Todo id which wants to get.",
             "required": true
           }
         ],
@@ -176,7 +196,7 @@
             "default": 1
           }
         },
-        "required": ["name","priority"]
+        "required": ["name"]
       }
     }
   }

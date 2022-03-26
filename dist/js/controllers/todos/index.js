@@ -19,27 +19,21 @@ const getTodos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let priority = req.query.priority || 1;
     const reg = new RegExp(keyword.toString(), 'i');
     let query;
-    if (req.query.status || req.query.priority) {
-        query = {
-            "$and": [
-                {
-                    "$or": [
-                        { name: { $regex: reg } },
-                        { description: { $regex: reg } }
-                    ]
-                },
-                { status: req.query.status },
-                { priority: req.query.priority }
-            ]
-        };
+    query = {
+        $and: [
+            {
+                $or: [
+                    { name: { $regex: reg } },
+                    { description: { $regex: reg } }
+                ]
+            }
+        ]
+    };
+    if (req.query.status) {
+        query['$and'].push({ status: req.query.status });
     }
-    else {
-        query = {
-            "$or": [
-                { name: { $regex: reg } },
-                { description: { $regex: reg } }
-            ]
-        };
+    if (req.query.priority) {
+        query['$and'].push({ priority: priority });
     }
     try {
         let todos;
