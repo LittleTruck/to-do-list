@@ -36,7 +36,7 @@ const getTodos = async (req: Request, res: Response): Promise<void> => {
             query,
             {},
             {
-                sort: {createdAt: -1}
+                sort: {status: 1, priority: 1, createdAt: -1}
             },
         )
 
@@ -45,7 +45,7 @@ const getTodos = async (req: Request, res: Response): Promise<void> => {
         res
             .status(500)
             .json({message: error})
-        throw error
+        console.log(error)
     }
 }
 
@@ -58,7 +58,7 @@ const getTodo = async (req: Request, res: Response): Promise<void> => {
         res
             .status(500)
             .json({message: error})
-        throw error
+        console.log(error)
     }
 }
 

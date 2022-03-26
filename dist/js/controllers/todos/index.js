@@ -44,7 +44,7 @@ const getTodos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let todos;
         todos = yield todo_1.default.find(query, {}, {
-            sort: { createdAt: -1 }
+            sort: { status: 1, priority: 1, createdAt: -1 }
         });
         res.status(200).json({ todos });
     }
@@ -52,7 +52,7 @@ const getTodos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res
             .status(500)
             .json({ message: error });
-        throw error;
+        console.log(error);
     }
 });
 exports.getTodos = getTodos;
@@ -65,7 +65,7 @@ const getTodo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res
             .status(500)
             .json({ message: error });
-        throw error;
+        console.log(error);
     }
 });
 exports.getTodo = getTodo;
