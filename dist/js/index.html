@@ -30,7 +30,8 @@
             </div>
             <div class="weekday">{{ days[date.getDay()]}}</div>
         </div>
-        <div class="todo-container">
+        <div  class="todo-container">
+            <span v-if="todos.length === 0" style="overflow: hidden">There are no current todos</span>
             <div :key="todo._id" class="todo-row" v-for="(todo, index) in todos">
                 <span class="todo-priority">{{ todo.priority }}</span>
                 <span @click="handleUpdate(todo._id)" class="todo-name">{{ todo.name }}</span>
@@ -43,9 +44,9 @@
             </div>
         </div>
         <div class="buttons">
-            <div @click="handleCreate()" class="button" id="reveal"><i class='bx bx-plus'></i></div>
+            <div @click="handleCreate" class="button" id="reveal"><i class='bx bx-plus'></i></div>
             <div @click="showFilter = true" class="button" id="filter"><i class='bx bx-filter'></i></div>
-            <div @click="showSearch = true" class="button" id="search"><i class='bx bx-search'></i></div>
+            <div @click="initFilter" class="button" id="refresh"><i class='bx bx-refresh'></i></div>
         </div>
     </div>
     <md-dialog :md-active.sync="showTodo">
@@ -76,14 +77,19 @@
     <md-dialog :md-active.sync="showFilter">
         <md-dialog-title>Filter</md-dialog-title>
         <div class="dialog-container">
+            <md-field>
+                <label>Keyword</label>
+                <md-input v-model="filter.keyword"></md-input>
+            </md-field>
             <div class="status-row">
                 <span>Status</span>
-                <md-radio v-model="filter.status">All</md-radio>
+                <md-radio :value="null" v-model="filter.status">All</md-radio>
                 <md-radio :value="0" v-model="filter.status">To-do</md-radio>
                 <md-radio :value="1" v-model="filter.status">done</md-radio>
             </div>
             <div class="priority-row">
                 <span>Priority</span>
+                <md-radio :value="null" v-model="filter.priority"><span class="priority-item">All</span></md-radio>
                 <md-radio :value="1" v-model="filter.priority"><span class="priority-item">1</span></md-radio>
                 <md-radio :value="2" v-model="filter.priority"><span class="priority-item">2</span></md-radio>
                 <md-radio :value="3" v-model="filter.priority"><span class="priority-item">3</span></md-radio>
@@ -93,18 +99,6 @@
         </div>
         <md-dialog-actions>
             <md-button @click="showFilter = false" class="md-primary">GO!</md-button>
-        </md-dialog-actions>
-    </md-dialog>
-    <md-dialog :md-active.sync="showSearch">
-        <md-dialog-title>Search</md-dialog-title>
-        <div class="dialog-container">
-            <md-field>
-                <label>Keyword</label>
-                <md-input v-model="empty.name"></md-input>
-            </md-field>
-        </div>
-        <md-dialog-actions>
-            <md-button @click="showSearch = false" class="md-primary">GO!</md-button>
         </md-dialog-actions>
     </md-dialog>
 </div>
@@ -131,6 +125,7 @@
                     status: false,
                 },
                 filter: {
+                    keyword: null,
                     status: null,
                     priority: null,
                 },
@@ -143,9 +138,23 @@
         created() {
             this.getTodos()
         },
+        watch:{
+          filter: {
+              handler:function (){
+                  this.getTodos()
+              },
+              deep:true
+          }  
+        },
         methods: {
             async getTodos() {
-                await axios.get('http://localhost:8000/api/todos')
+                await axios.get('http://localhost:8000/api/todos',{
+                    params:{
+                        keyword : this.filter.keyword,
+                        status: this.filter.status,
+                        priority:this.filter.priority
+                    }
+                })
                     .then(res => {
                         this.todos = res.data.todos
                     })
@@ -237,6 +246,11 @@
                 this.todo.status = !this.todo.status
                 await this.saveTodo()
             },
+            initFilter(){
+                this.filter.keyword = null
+                this.filter.status = null
+                this.filter.priority = null
+            }
         }
     })
 </script>

@@ -52,9 +52,7 @@ const getTodos = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.getTodos = getTodos;
 const getTodo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const todo = yield todo_1.default.findById(req.params.id, res
-            .status(404)
-            .json({ message: "Id not exist." }));
+        const todo = yield todo_1.default.findById(req.params.id);
         res.status(200).json({ todo: todo });
     }
     catch (error) {
@@ -91,9 +89,7 @@ exports.addTodo = addTodo;
 const updateTodo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { params: { id }, body, } = req;
-        yield todo_1.default.findByIdAndUpdate({ _id: id }, body, res
-            .status(404)
-            .json({ message: "Id not exist." }));
+        yield todo_1.default.findByIdAndUpdate({ _id: id }, body);
         const updatedTodo = yield todo_1.default.findById(id);
         const allTodos = yield todo_1.default.find();
         res.status(200).json({
@@ -112,9 +108,7 @@ const updateTodo = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 exports.updateTodo = updateTodo;
 const deleteTodo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield todo_1.default.findByIdAndRemove(req.params.id, res
-            .status(404)
-            .json({ message: "Id not exist." }));
+        yield todo_1.default.findByIdAndRemove(req.params.id);
         const allTodos = yield todo_1.default.find();
         res.status(200).json({
             message: "Todo deleted",

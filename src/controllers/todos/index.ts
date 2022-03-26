@@ -46,12 +46,7 @@ const getTodos = async (req: Request, res: Response): Promise<void> => {
 
 const getTodo = async (req: Request, res: Response): Promise<void> => {
     try {
-        const todo = await Todo.findById(
-            req.params.id,
-            res
-                .status(404)
-                .json({message: "Id not exist."})
-        )
+        const todo = await Todo.findById(req.params.id)
 
         res.status(200).json({todo: todo})
     } catch (error) {
@@ -96,10 +91,7 @@ const updateTodo = async (req: Request, res: Response): Promise<void> => {
 
         await Todo.findByIdAndUpdate(
             {_id: id},
-            body,
-            res
-                .status(404)
-                .json({message: "Id not exist."})
+            body
         )
 
         const updatedTodo = await Todo.findById(id);
@@ -120,13 +112,7 @@ const updateTodo = async (req: Request, res: Response): Promise<void> => {
 
 const deleteTodo = async (req: Request, res: Response): Promise<void> => {
     try {
-        await Todo.findByIdAndRemove(
-            req.params.id,
-
-            res
-                .status(404)
-                .json({message: "Id not exist."})
-        )
+        await Todo.findByIdAndRemove(req.params.id)
 
         const allTodos: ITodo[] = await Todo.find()
 
