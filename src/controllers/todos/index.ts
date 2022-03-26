@@ -24,7 +24,7 @@ const getTodos = async (req: Request, res: Response): Promise<void> => {
     if (req.query.priority) {
         query['$and'].push({priority: priority});
     }
-    
+
     try {
         let todos: ITodo[]
         todos = await Todo.find(
@@ -48,7 +48,14 @@ const getTodo = async (req: Request, res: Response): Promise<void> => {
     try {
         const todo = await Todo.findById(req.params.id)
 
-        res.status(200).json({todo: todo})
+        if (todo) {
+            res.status(200).json({todo: todo})
+        } else {
+            res
+                .status(404)
+                .json({message: "Id not exist."})
+        }
+
     } catch (error) {
         res
             .status(500)
@@ -78,7 +85,7 @@ const addTodo = async (req: Request, res: Response): Promise<void> => {
         res
             .status(500)
             .json({message: error})
-        throw error
+        console.log(error)
     }
 }
 
@@ -89,23 +96,30 @@ const updateTodo = async (req: Request, res: Response): Promise<void> => {
             body,
         } = req
 
-        const updateTodo: ITodo | null = await Todo.findByIdAndUpdate(
+        await Todo.findByIdAndUpdate(
             {_id: id},
             body
         )
 
+        const updatedTodo = await Todo.findById(id);
         const allTodos: ITodo[] = await Todo.find()
 
-        res.status(200).json({
-            message: "Todo updated",
-            todo: updateTodo,
-            todos: allTodos,
-        })
+        if (updatedTodo) {
+            res.status(200).json({
+                message: "Todo updated",
+                updatedTodo: updatedTodo,
+                todos: allTodos
+            })
+        } else {
+            res
+                .status(404)
+                .json({message: "Id not exist."})
+        }
     } catch (error) {
         res
             .status(500)
             .json({message: error})
-        throw error
+        console.log(error)
     }
 }
 
@@ -117,16 +131,21 @@ const deleteTodo = async (req: Request, res: Response): Promise<void> => {
 
         const allTodos: ITodo[] = await Todo.find()
 
-        res.status(200).json({
-            message: "Todo deleted",
-            todo: deletedTodo,
-            todos: allTodos,
-        })
+        if (deletedTodo) {
+            res.status(200).json({
+                message: "Todo deleted",
+                todos: allTodos
+            })
+        } else {
+            res
+                .status(404)
+                .json({message: "Id not exist."})
+        }
     } catch (error) {
         res
             .status(500)
             .json({message: error})
-        throw error
+        console.log(error)
     }
 }
 

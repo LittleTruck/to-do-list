@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+require('dotenv').config();
 const express_1 = __importDefault(require("express"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const cors_1 = __importDefault(require("cors"));
@@ -20,10 +21,10 @@ app.use('/api/docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.de
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html');
 });
-const uri = `mongodb://127.0.0.1:27017`;
+const uri = `mongodb://${process.env.DB_HOST}:27017/${process.env.DB_NAME}`;
 mongoose_1.default
     .connect(uri)
-    .then(() => app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`)))
+    .then(() => app.listen(PORT, () => console.log(`Server running on http://${process.env.HOST}:${PORT}`)))
     .catch(error => {
     throw error;
 });
