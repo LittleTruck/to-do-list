@@ -42,4 +42,4 @@ Edit todo page
 
 Filter page
 
-![filter.jpg](./preview/filter.jpg)
+<img alt="filter" src="preview\filter.jpg" width="50%"/>
