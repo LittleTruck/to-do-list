@@ -2,7 +2,7 @@
 A To-Do List with features like create, edit, filter, prioritize
 - frontend：Vue.js
 - backend：Typescript + Express
-- database：MongoDB
+- database：MongoDB (Install：https://www.mongodb.com/docs/guides/server/install/)
 
 ### ****Environment variables****
 ```
@@ -37,8 +37,8 @@ npm run test
 
 ### Page route
 
-- home page: [http://localhost:8000](http://localhost:8000/)
-- swagger document: [http://localhost:8000/api/docs/](http://localhost:8000/api/docs/)
+- home page：[http://localhost:8000](http://localhost:8000/)
+- swagger document：[http://localhost:8000/api/docs/](http://localhost:8000/api/docs/)
 
 ## ****Project preview****
 
