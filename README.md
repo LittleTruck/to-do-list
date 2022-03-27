@@ -4,6 +4,15 @@ A To-Do List with features like create, edit, filter, prioritize
 - backend：Typescript + Express
 - database：MongoDB
 
+### ****Environment variables****
+```
+HOST: localhost
+PORT: 8000
+
+DB_HOST: localhost
+DB_NAME: todo
+```
+
 ### **Install Dependency**
 
 ```bash
@@ -26,19 +35,24 @@ npm run start
 npm run test
 ```
 
+### Page route
+
+- home page: [http://localhost:8000](http://localhost:8000/)
+- swagger document: [http://localhost:8000/api/docs/](http://localhost:8000/api/docs/)
+
 ## ****Project preview****
 
 Home page
 
-![home.jpg](./preview/home.jpg)
+<img alt="home" src="preview\home.jpg" width="50%"/>
 
 New todo page
 
-![add.jpg](./preview/add.jpg)
+<img alt="add" src="preview\add.jpg" width="50%"/>
 
 Edit todo page
 
-![edit.jpg](./preview/edit.jpg)
+<img alt="edit" src="preview\edit.jpg" width="50%"/>
 
 Filter page
 
