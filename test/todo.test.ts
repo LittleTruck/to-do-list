@@ -1,16 +1,21 @@
 import chai, {expect} from 'chai';
 import chaiHttp from 'chai-http';
+import Todo from "../src/models/todo"
+import {getTodos, getTodo, addTodo, updateTodo, deleteTodo} from "../src/controllers/todos"
 
 chai.use(chaiHttp);
 
 const PORT: string | number = process.env.PORT || 8000
 const uri = `http://127.0.0.1:${PORT}/api`
+const sinon = require("sinon");
 
 let todoCount = 0;
 let addedTodoId = "";
 
 describe("Todo List", function () {
-
+    this.beforeEach(async () => {
+        await sinon.restore();
+    })
     it("#1 getTodos", async function () {
         await chai.request(uri)
             .get('/todos')
@@ -26,19 +31,26 @@ describe("Todo List", function () {
             description: "description1",
             status: false
         }
-        todoCount++;
 
-        await chai.request(uri)
-            .post('/todos')
-            .send(todo)
-            .then(async (res: any) => {
-                expect(await res.status).to.equal(201)
-                addedTodoId = res.body.todo._id;
-                expect(await res.body.todo.name).to.equal(todo.name)
-                expect(await res.body.todo.description).to.equal(todo.description)
-                expect(await res.body.todo.status).to.equal(todo.status)
-                expect(await res.body.todos.length).to.equal(todoCount)
-            });
+        let res = {} as any;
+        const todoRequest = {
+            body: {
+                name: "name1",
+                description: "description1",
+                status: false
+            },
+        } as any;
+
+        sinon.stub(Todo.prototype, 'save').returns(todo);
+        sinon.stub(Todo, 'find').returns(todoRequest);
+        
+        try {
+             await addTodo(todoRequest, res);
+        }catch (err){
+            console.log(err)
+        }
+        await console.log(res)
+        // await expect(todo.name).to.equal(res.body.name);
     })
 
     it("#3 getTodo", async function () {
