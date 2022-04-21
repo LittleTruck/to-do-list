@@ -4,5 +4,5 @@ export interface ITodo extends Document {
     name: string
     description: string
     status: boolean
-    priority: Number
+    priority: number
 }

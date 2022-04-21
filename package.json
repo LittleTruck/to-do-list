@@ -6,7 +6,8 @@
   "scripts": {
     "build": "tsc",
     "start": "concurrently \"tsc -w\" \"nodemon dist/js/server.js\"",
-    "test": "mocha --require ts-node/register test/*.ts"
+    "test": "mocha --require ts-node/register test/*.ts",
+    "coverage": "nyc npm run test"
   },
   "repository": {
     "type": "git",
@@ -38,6 +39,7 @@
     "concurrently": "^7.0.0",
     "mocha": "^9.2.2",
     "nodemon": "^2.0.15",
+    "nyc": "^15.1.0",
     "ts-node": "^10.7.0",
     "typescript": "^4.6.2"
   }
